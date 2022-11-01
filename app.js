@@ -15,7 +15,6 @@ app.use(function (req, res, next) {
   );
   next();
 });
-
 // #############################################################################
 // This configures static hosting for files in /public that have the extensions
 // listed in the array.
@@ -54,5 +53,7 @@ app.get('/api/historic-spots', async (req, res) => {
       },
     );
 });
+
+
 
 module.exports = app;
