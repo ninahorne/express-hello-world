@@ -858,6 +858,7 @@ const initMap = () => {
 };
 
 const init = async () => {
+  console.log("here")
   window.initMap = initMap;
 };
 
