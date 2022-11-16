@@ -39,11 +39,58 @@ app.get('/api/historic-spots', async (req, res) => {
     .eachPage(
       async (records, fetchNextPage) => {
         historicSpots.push(...records.map((record) => record._rawJson));
-        console.log({ historicSpots });
         fetchNextPage();
       },
       () => {
         res.send(historicSpots);
+      },
+      (err) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+      },
+    );
+});
+app.get('/api/jails', async (req, res) => {
+  const base = new Airtable().base('appVpIuJPpgBhA886');
+  const jails = [];
+  base('Jail Map')
+    .select({
+      // Selecting the first 3 records in Grid view:
+      view: 'Web Design View',
+    })
+    .eachPage(
+      async (records, fetchNextPage) => {
+        jails.push(...records.map((record) => record._rawJson));
+        fetchNextPage();
+      },
+      () => {
+        res.send(jails);
+      },
+      (err) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+      },
+    );
+});
+app.get('/api/janitorial-services', async (req, res) => {
+  const base = new Airtable().base('appVpIuJPpgBhA886');
+  const janitorialServices = [];
+  base('Janitorial Services Map')
+    .select({
+      // Selecting the first 3 records in Grid view:
+      view: 'Grid view',
+    })
+    .eachPage(
+      async (records, fetchNextPage) => {
+        janitorialServices.push(...records.map((record) => record._rawJson));
+        fetchNextPage();
+      },
+      () => {
+        res.send(janitorialServices);
       },
       (err) => {
         if (err) {
