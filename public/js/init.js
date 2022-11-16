@@ -3,6 +3,9 @@ let map;
 const historicSpotsMarkerPath = '/assets/historic-spots.svg';
 const jailMarkerPath = '/assets/jails.svg';
 const janitorialServicesMarkerPath = '/assets/janitorial-services.svg';
+const historicSpotsMarkers = [];
+const jailMarkers = [];
+const janMarkers = [];
 
 const addPolygon = (coords) => {
   const parishOutline = new google.maps.Polygon({
@@ -16,7 +19,7 @@ const addPolygon = (coords) => {
   parishOutline.setMap(map);
 };
 
-const addMarker = (coords, title, icon, infowindow) => {
+const addMarker = (coords, title, icon, infowindow, list) => {
   const marker = new google.maps.Marker({
     position: coords,
     map,
@@ -29,6 +32,8 @@ const addMarker = (coords, title, icon, infowindow) => {
       map,
     });
   });
+
+  list.push(marker);
 };
 
 const fetchHistoricSpotsData = async () => {
@@ -50,7 +55,6 @@ const initMap = async () => {
     .then((res) => res.data);
   const historicSpots = await fetchHistoricSpotsData();
   const jails = await fetchJailData();
-  console.log({ jails });
   const janitorialServices = await fetchJanitorialServicesData();
 
   const features = parishDataRaw.features;
@@ -341,6 +345,7 @@ const initMap = async () => {
       spot.fields['Historic Location Name'],
       historicSpotsMarkerPath,
       infowindow,
+      historicSpotsMarkers,
     );
   });
 
@@ -441,7 +446,13 @@ const initMap = async () => {
         maxWidth: 252,
       });
 
-      addMarker(coords, jail.fields['Prison/Jail'], jailMarkerPath, infowindow);
+      addMarker(
+        coords,
+        jail.fields['Prison/Jail'],
+        jailMarkerPath,
+        infowindow,
+        jailMarkers,
+      );
     }
   });
   // Add janitorial services
@@ -464,7 +475,8 @@ const initMap = async () => {
       coords,
       service.fields['Building Name'],
       janitorialServicesMarkerPath,
-      infowindow
+      infowindow,
+      janMarkers,
     );
   });
 };
@@ -473,4 +485,44 @@ const init = async () => {
   window.initMap = initMap;
 };
 
+const setUpMapLegend = () => {
+  const jailSwitch = document.getElementById('jailSwitch');
+  const janSwitch = document.getElementById('janSwitch');
+  const histSwitch = document.getElementById('histSwitch');
+  jailSwitch.addEventListener('change', (event) => {
+    if (event.target.checked) {
+      jailMarkers.forEach((marker) => {
+        marker.setMap(map);
+      });
+    } else {
+      jailMarkers.forEach((marker) => {
+        marker.setMap(null);
+      });
+    }
+  });
+  janSwitch.addEventListener('change', (event) => {
+    if (event.target.checked) {
+      janMarkers.forEach((marker) => {
+        marker.setMap(map);
+      });
+    } else {
+      janMarkers.forEach((marker) => {
+        marker.setMap(null);
+      });
+    }
+  });
+  histSwitch.addEventListener('change', (event) => {
+    if (event.target.checked) {
+      historicSpotsMarkers.forEach((marker) => {
+        marker.setMap(map);
+      });
+    } else {
+      historicSpotsMarkers.forEach((marker) => {
+        marker.setMap(null);
+      });
+    }
+  });
+};
+
 init();
+setUpMapLegend();
