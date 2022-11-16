@@ -42,8 +42,19 @@ li {
   left: 0;
   padding: 2rem;
   z-index: 10;
-  border-top: 20px solid #97c943;
+  border-top: 10px solid #97c943;
   box-shadow: 0px 3px 6px #00000029;
+  margin-top: 10px;
+}
+
+@media screen and (max-width: 767px) {
+  #legend {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    top: unset;
+  }
 }
 
 #legend .legend__row {
