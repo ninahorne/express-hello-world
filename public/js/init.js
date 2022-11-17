@@ -299,12 +299,24 @@ try {
     const historicSpots = await fetchHistoricSpotsData();
     const jails = await fetchJailData();
     const janitorialServices = await fetchJanitorialServicesData();
-    const polygons = await axios
+    const parishDataRaw = await axios
       .get('../json/parishData2.json')
       .then((res) => res.data);
+    const features = parishDataRaw.features;
 
-      console.log({polygons})
-    
+    // Create polygons out of GeoJSON coordinates
+    const coordinates = features.map((f) => f.geometry.coordinates[0]);
+    const createPolygons = (coords) => {
+      return coords.map((c) => {
+        if (c.length == 3) {
+          const [lng, lat] = c;
+          return { lat, lng };
+        } else {
+          return createPolygons(c);
+        }
+      });
+    };
+    const polygons = createPolygons(coordinates);
     // Add polygons to map
     polygons.forEach((gon) => {
       addPolygon(gon);
