@@ -299,12 +299,11 @@ try {
     const jails = await fetchJailData();
     const janitorialServices = await fetchJanitorialServicesData();
     const features = [];
-    for (let i = 1; i <= 64; i++) {
+    for (let i = 1; i <= 63; i += 2) {
       const feat = await axios.get(`./json/${i}.json`).then((res) => res.data);
       setTimeout(() => {}, [100]);
-      features.push(feat);
+      features.push(...feat);
     }
-    console.log(features);
 
     // Create polygons out of GeoJSON coordinates
     const coordinates = features.map((f) => f.geometry.coordinates[0]);
