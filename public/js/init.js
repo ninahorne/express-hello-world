@@ -49,34 +49,6 @@ const fetchJanitorialServicesData = async () => {
 };
 
 const initMap = async () => {
-  // Parse parish GeoJson data
-  const parishDataRaw = await axios
-    .get('../json/parishData.json')
-    .then((res) => res.data);
-  const historicSpots = await fetchHistoricSpotsData();
-  const jails = await fetchJailData();
-  const janitorialServices = await fetchJanitorialServicesData();
-
-  const features = parishDataRaw.features;
-
-  // Create polygons out of GeoJSON coordinates
-  const coordinates = features.map((f) => f.geometry.coordinates);
-  const polygons = coordinates.map((c) => {
-    return c.map((x) => {
-      return x.map((y) => {
-        if (y.length == 2) {
-          const [lng, lat] = y;
-          return { lat, lng };
-        } else {
-          return y.map((z) => {
-            const [lng, lat] = z;
-            return { lat, lng };
-          });
-        }
-      });
-    });
-  });
-
   // Initialize map element
   map = new google.maps.Map(document.getElementById('map'), {
     zoom: 9,
@@ -306,6 +278,33 @@ const initMap = async () => {
     ],
   });
 
+  // Parse parish GeoJson data
+  const parishDataRaw = await axios
+    .get('../json/parishData.json')
+    .then((res) => res.data);
+  const historicSpots = await fetchHistoricSpotsData();
+  const jails = await fetchJailData();
+  const janitorialServices = await fetchJanitorialServicesData();
+
+  const features = parishDataRaw.features;
+
+  // Create polygons out of GeoJSON coordinates
+  const coordinates = features.map((f) => f.geometry.coordinates);
+  const polygons = coordinates.map((c) => {
+    return c.map((x) => {
+      return x.map((y) => {
+        if (y.length == 2) {
+          const [lng, lat] = y;
+          return { lat, lng };
+        } else {
+          return y.map((z) => {
+            const [lng, lat] = z;
+            return { lat, lng };
+          });
+        }
+      });
+    });
+  });
   // Add polygons to map
   polygons.forEach((gon) => {
     if (gon.length == 1) {
@@ -359,7 +358,6 @@ const initMap = async () => {
         'upload',
         'upload/h_200,w_200,c_fill,q_30',
       )?.split(';');
-      console.log({ image, field: jail.fields.URL });
       const address = jail.fields.Address;
       const operator = jail.fields['What Type of Facility?'];
       const hardLabor = jail.fields['Total People With Hard Labor Sentences'];
