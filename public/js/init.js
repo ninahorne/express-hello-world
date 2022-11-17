@@ -301,6 +301,7 @@ try {
     const features = [];
     for (let i = 1; i <= 64; i++) {
       const feat = await axios.get(`./json/${i}.json`).then((res) => res.data);
+      setTimeout(() => {}, [100]);
       features.push(feat);
     }
     console.log(features);
