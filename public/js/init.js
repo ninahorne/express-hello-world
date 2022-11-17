@@ -1,4 +1,3 @@
-
 try {
   let map;
 
@@ -299,10 +298,12 @@ try {
     const historicSpots = await fetchHistoricSpotsData();
     const jails = await fetchJailData();
     const janitorialServices = await fetchJanitorialServicesData();
-    const parishDataRaw = await axios
-      .get('../json/parishData2.json')
-      .then((res) => res.data);
-    const features = parishDataRaw.features;
+    const features = [];
+    for (let i = 1; i <= 64; i++) {
+      const feat = await axios.get(`./json/${i}.json`).then((res) => res.data);
+      features.push(feat);
+    }
+    console.log(features);
 
     // Create polygons out of GeoJSON coordinates
     const coordinates = features.map((f) => f.geometry.coordinates[0]);

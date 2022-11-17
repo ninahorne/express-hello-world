@@ -28,6 +28,20 @@ var options = {
 };
 app.use(express.static('public', options));
 
+// app.get('/api/file', () => {
+//   const fs = require('fs');
+//   const data = require('./parishData2.json');
+//   const features = data.features;
+//   features.forEach((f, i) => {
+//     fs.writeFile(`./public/json/${i+1}.json`, JSON.stringify(f), (err) => {
+//       if (err) {
+//         console.error(err);
+//         return;
+//       }
+//       //file written successfully
+//     });
+//   });
+// });
 app.get('/api/historic-spots', async (req, res) => {
   const base = new Airtable().base('appVpIuJPpgBhA886');
   const historicSpots = [];
@@ -100,7 +114,5 @@ app.get('/api/janitorial-services', async (req, res) => {
       },
     );
 });
-
-
 
 module.exports = app;
