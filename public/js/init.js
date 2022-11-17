@@ -4,6 +4,7 @@ const historicSpotsMarkerPath = '/assets/historic-spots.svg';
 const jailMarkerPath = '/assets/jails.svg';
 const janitorialServicesMarkerPath = '/assets/janitorial-services.svg';
 const historicSpotsMarkers = [];
+const polygons = [];
 const jailMarkers = [];
 const janMarkers = [];
 
@@ -11,12 +12,15 @@ const addPolygon = (coords) => {
   const parishOutline = new google.maps.Polygon({
     paths: coords,
     strokeColor: '#97C943',
+    fillColor: '#97C943',
     strokeOpacity: 0.8,
     strokeWeight: 1,
     fillOpacity: 0,
+    geodesic: true,
   });
 
   parishOutline.setMap(map);
+  polygons.push(parishOutline);
 };
 
 const addMarker = (coords, title, icon, infowindow, list) => {
@@ -26,10 +30,22 @@ const addMarker = (coords, title, icon, infowindow, list) => {
     title,
     icon,
   });
-  marker.addListener('click', () => {
+  marker.addListener('click', (event) => {
     infowindow.open({
       anchor: marker,
       map,
+    });
+
+    polygons.forEach((p) => {
+      const polygonContainsPT = google.maps.geometry.poly.containsLocation(
+        { lat: event.latLng.lat(), lng: event.latLng.lng() },
+        p,
+      );
+      if (polygonContainsPT) {
+        p.setOptions({ fillOpacity: 1 });
+      } else {
+        p.setOptions({ fillOpacity: 0 });
+      }
     });
   });
 
@@ -289,35 +305,21 @@ const initMap = async () => {
   const features = parishDataRaw.features;
 
   // Create polygons out of GeoJSON coordinates
-  const coordinates = features.map((f) => f.geometry.coordinates);
-  const polygons = coordinates.map((c) => {
-    return c.map((x) => {
-      return x.map((y) => {
-        if (y.length == 2) {
-          const [lng, lat] = y;
-          return { lat, lng };
-        } else {
-          return y.map((z) => {
-            const [lng, lat] = z;
-            return { lat, lng };
-          });
-        }
-      });
+  const coordinates = features.map((f) => f.geometry.coordinates[0]);
+  const createPolygons = (coords) => {
+    return coords.map((c) => {
+      if (c.length == 3) {
+        const [lng, lat] = c;
+        return { lat, lng };
+      } else {
+        return createPolygons(c);
+      }
     });
-  });
+  };
+  const polygons = createPolygons(coordinates);
   // Add polygons to map
   polygons.forEach((gon) => {
-    if (gon.length == 1) {
-      gon.forEach((g) => {
-        addPolygon(g);
-      });
-    } else {
-      gon.forEach((g) => {
-        if (g.length == 1) {
-          addPolygon(g);
-        }
-      });
-    }
+    addPolygon(gon);
   });
 
   // Add historic spots
@@ -329,7 +331,7 @@ const initMap = async () => {
 
     const content = `
       <div class="info-window">
-        <h1>${title}</h1>
+        <h2>${title}</h2>
         <p>${text}</p>
       </div>
     `;
@@ -387,11 +389,10 @@ const initMap = async () => {
       const color = jail.fields.Color;
       const benefit = jail.fields['Benefit Rating'];
       const convRate = jail.fields['Parish Conviction Rate'];
-
       const content = `
     <div class="info-window">
       <h2>${title}</h2>
-      ${image ? `${image.map((src) => `<img src="${src}" />`)}` : ''}
+      ${image ? `${image.map((src) =>  `<img src="${src}" />`)}` : ''}
       <h3>Address</h3>
       <p>${address}</p>
       <h3>Operator</h3>
