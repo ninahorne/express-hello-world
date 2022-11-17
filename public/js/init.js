@@ -296,7 +296,7 @@ const initMap = async () => {
 
   // Parse parish GeoJson data
   const parishDataRaw = await axios
-    .get('../json/parishData2.json')
+    .get('/api/parish-data')
     .then((res) => res.data);
   const historicSpots = await fetchHistoricSpotsData();
   const jails = await fetchJailData();

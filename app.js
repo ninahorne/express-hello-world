@@ -27,7 +27,10 @@ var options = {
   redirect: false,
 };
 app.use(express.static('public', options));
-
+app.get('/api/parish-data', async (req, res) => {
+  const data = require('./parishData2.json');
+  res.send(data);
+});
 app.get('/api/historic-spots', async (req, res) => {
   const base = new Airtable().base('appVpIuJPpgBhA886');
   const historicSpots = [];
