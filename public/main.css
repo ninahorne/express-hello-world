@@ -103,3 +103,20 @@ li {
   background-color: #7d1d44;
   border-color: #7d1d44;
 }
+
+
+#loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+#loader svg path,
+#loader svg rect{
+  fill: #97C943;
+}
