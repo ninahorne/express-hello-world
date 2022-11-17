@@ -32,9 +32,9 @@ app.get('/api/file', () => {
   const fs = require('fs');
   const data = require('./parishData2.json');
   const features = data.features;
-  for (let i = 0; i < features.length; i += 2) {
-    const two = features.slice(i, i + 2);
-    fs.writeFile(`./public/json/${i + 1}.json`, JSON.stringify(two), (err) => {
+  for (let i = 0; i < features.length; i += 3) {
+    const three = features.slice(i, i + 3);
+    fs.writeFile(`./public/json/${i}.json`, JSON.stringify(three), (err) => {
       if (err) {
         console.error(err);
         return;

@@ -299,9 +299,8 @@ try {
     const jails = await fetchJailData();
     const janitorialServices = await fetchJanitorialServicesData();
     const features = [];
-    for (let i = 1; i <= 63; i += 2) {
+    for (let i = 0; i <= 63; i += 3) {
       const feat = await axios.get(`./json/${i}.json`).then((res) => res.data);
-      setTimeout(() => {}, [100]);
       features.push(...feat);
     }
 
