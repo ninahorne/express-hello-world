@@ -296,7 +296,11 @@ const initMap = async () => {
 
   // Parse parish GeoJson data
   const parishDataRaw = await axios
-    .get('/api/parish-data')
+    .get('/api/parish-data', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
     .then((res) => res.data);
   const historicSpots = await fetchHistoricSpotsData();
   const jails = await fetchJailData();
@@ -392,7 +396,7 @@ const initMap = async () => {
       const content = `
     <div class="info-window">
       <h2>${title}</h2>
-      ${image ? `${image.map((src) =>  `<img src="${src}" />`)}` : ''}
+      ${image ? `${image.map((src) => `<img src="${src}" />`)}` : ''}
       <h3>Address</h3>
       <p>${address}</p>
       <h3>Operator</h3>
@@ -480,7 +484,7 @@ const initMap = async () => {
   });
 
   const loader = document.getElementById('loader');
-  loader.style.display = 'none'
+  loader.style.display = 'none';
 };
 
 const init = async () => {
