@@ -484,8 +484,17 @@ try {
     loader.style.display = 'none';
   };
 
+  const setScript = () => {
+    const body = document.getElementById('body');
+    const gmapsScript = document.createElement("script");
+    gmapsScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBJYKYERwYLHVhkzpdcsYRo5gAummRXu00&callback=initMap';
+    body.appendChild(gmapsScript)
+  }
+
   const init = async () => {
     window.initMap = initMap;
+    setScript();
+
   };
 
   const setUpMapLegend = () => {
