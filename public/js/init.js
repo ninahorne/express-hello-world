@@ -9,6 +9,36 @@ try {
   const jailMarkers = [];
   const janMarkers = [];
 
+  const hideLoader = () => {
+    const loader = document.getElementById('loader');
+    loader.style.display = 'none';
+  };
+
+  const setParishData = async () => {
+    const features = [];
+    for (let i = 0; i <= 63; i += 9) {
+      const feat = await axios.get(`./json/${i}.json`).then((res) => res.data);
+      features.push(...feat);
+    }
+
+    // Create polygons out of GeoJSON coordinates
+    const coordinates = features.map((f) => f.geometry.coordinates[0]);
+    const createPolygons = (coords) => {
+      return coords.map((c) => {
+        if (c.length == 3) {
+          const [lng, lat] = c;
+          return { lat, lng };
+        } else {
+          return createPolygons(c);
+        }
+      });
+    };
+    const polygons = createPolygons(coordinates);
+    // Add polygons to map
+    polygons.forEach((gon) => {
+      addPolygon(gon);
+    });
+  };
   const addPolygon = (coords) => {
     const parishOutline = new google.maps.Polygon({
       paths: coords,
@@ -296,32 +326,6 @@ try {
     });
 
     const historicSpots = await fetchHistoricSpotsData();
-    const jails = await fetchJailData();
-    const janitorialServices = await fetchJanitorialServicesData();
-    const features = [];
-    for (let i = 0; i <= 63; i += 9) {
-      const feat = await axios.get(`./json/${i}.json`).then((res) => res.data);
-      features.push(...feat);
-    }
-
-    // Create polygons out of GeoJSON coordinates
-    const coordinates = features.map((f) => f.geometry.coordinates[0]);
-    const createPolygons = (coords) => {
-      return coords.map((c) => {
-        if (c.length == 3) {
-          const [lng, lat] = c;
-          return { lat, lng };
-        } else {
-          return createPolygons(c);
-        }
-      });
-    };
-    const polygons = createPolygons(coordinates);
-    // Add polygons to map
-    polygons.forEach((gon) => {
-      addPolygon(gon);
-    });
-
     // Add historic spots
     historicSpots.forEach((spot) => {
       const [lat, lng] = spot.fields.Address.split(',');
@@ -349,7 +353,7 @@ try {
         historicSpotsMarkers,
       );
     });
-
+    const jails = await fetchJailData();
     // Add jails
     jails.forEach((jail) => {
       if (jail.fields.Coordinates) {
@@ -455,6 +459,8 @@ try {
         );
       }
     });
+    const janitorialServices = await fetchJanitorialServicesData();
+
     // Add janitorial services
     janitorialServices.forEach((service) => {
       // const [lat, lng] = service.fields.Coordinates.split(',');
@@ -480,21 +486,21 @@ try {
       );
     });
 
-    const loader = document.getElementById('loader');
-    loader.style.display = 'none';
+    hideLoader();
+    setParishData();
   };
 
   const setScript = () => {
     const body = document.getElementById('body');
-    const gmapsScript = document.createElement("script");
-    gmapsScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBJYKYERwYLHVhkzpdcsYRo5gAummRXu00&callback=initMap';
-    body.appendChild(gmapsScript)
-  }
+    const gmapsScript = document.createElement('script');
+    gmapsScript.src =
+      'https://maps.googleapis.com/maps/api/js?key=AIzaSyBJYKYERwYLHVhkzpdcsYRo5gAummRXu00&callback=initMap';
+    body.appendChild(gmapsScript);
+  };
 
   const init = async () => {
     window.initMap = initMap;
     setScript();
-
   };
 
   const setUpMapLegend = () => {
