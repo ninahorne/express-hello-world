@@ -377,6 +377,7 @@ try {
         const percentMen = jail.fields['%Men Population'];
         const percentWomen = jail.fields['%Women Population'];
 
+        console.log({ percentMen, percentWomen });
         const transWork =
           jail.fields[
             'Had An Operational Transitional Work Program in June 2022'
@@ -463,8 +464,15 @@ try {
 
     // Add janitorial services
     janitorialServices.forEach((service) => {
-      // const [lat, lng] = service.fields.Coordinates.split(',');
-      const coords = { lat: 0, lng: 0 };
+      const [lat, lng] = service.fields['Coordinates1'].split(',').map((x) => {
+        const n = Number(x
+          .replaceAll('°', '')
+          .replaceAll('N', '')
+          .replaceAll('W', '')
+          .trim());
+        return n;
+      });
+      const coords = { lat: lat, lng: -lng };
       const buildingName = service.fields['Building Name'];
       const address = service.fields.Address;
       const offices = service.fields['Offices in the Building'];
