@@ -8,6 +8,7 @@ try {
   const polygons = [];
   const jailMarkers = [];
   const janMarkers = [];
+  const infoWindows = [];
 
   const hideLoader = () => {
     const loader = document.getElementById('loader');
@@ -61,7 +62,10 @@ try {
       title,
       icon,
     });
+    infoWindows.push(infowindow);
+
     marker.addListener('click', (event) => {
+      infoWindows.forEach((win) => win.close());
       infowindow.open({
         anchor: marker,
         map,
@@ -377,7 +381,6 @@ try {
         const percentMen = jail.fields['%Men Population'];
         const percentWomen = jail.fields['%Women Population'];
 
-        console.log({ percentMen, percentWomen });
         const transWork =
           jail.fields[
             'Had An Operational Transitional Work Program in June 2022'
@@ -465,11 +468,9 @@ try {
     // Add janitorial services
     janitorialServices.forEach((service) => {
       const [lat, lng] = service.fields['Coordinates1'].split(',').map((x) => {
-        const n = Number(x
-          .replaceAll('°', '')
-          .replaceAll('N', '')
-          .replaceAll('W', '')
-          .trim());
+        const n = Number(
+          x.replaceAll('°', '').replaceAll('N', '').replaceAll('W', '').trim(),
+        );
         return n;
       });
       const coords = { lat: lat, lng: -lng };
@@ -485,6 +486,7 @@ try {
         ariaLabel: buildingName,
         maxWidth: 252,
       });
+
       addMarker(
         coords,
         service.fields['Building Name'],
