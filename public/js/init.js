@@ -410,7 +410,8 @@ try {
       <p>${hardLabor}</p>
       <h3>Demographics</h3>
       <ul>
-        <li>Black: ${percentBlack || '0%'}</li>
+      ${percentBlack ? `<li>Black: ${percentBlack || '0%'}</li>` : ''}
+        
         ${percentWhite ? `<li>White: ${percentWhite || '0%'}</li>` : ''}
         ${percentAsian ? `<li>Asian: ${percentAsian || '0%'}</li>` : ''}
         ${percentIndian ? `<li>Indian: ${percentIndian || '0%'}</li>` : ''}
