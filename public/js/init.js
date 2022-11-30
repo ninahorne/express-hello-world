@@ -411,14 +411,17 @@ try {
       <h3>Demographics</h3>
       <ul>
         <li>Black: ${percentBlack || '0%'}</li>
-        <li>White: ${percentWhite || '0%'}</li>
-        <li>Asian: ${percentAsian || '0%'}</li>
-        <li>Indian: ${percentIndian || '0%'}</li>
-        <li>Hispanic: ${percentHispanic || '0%'}</li>
-        <li>Latinx: ${precentLatinx || '0%'}</li>
-        <li>Other: ${percentOther || '0%'}</li>
-        <li>Men: ${percentMen || '0%'}</li>
-        <li>Women: ${percentWomen || '0%'}</li>
+        ${percentWhite ? `<li>White: ${percentWhite || '0%'}</li>` : ''}
+        ${percentAsian ? `<li>Asian: ${percentAsian || '0%'}</li>` : ''}
+        ${percentIndian ? `<li>Indian: ${percentIndian || '0%'}</li>` : ''}
+        ${
+          percentHispanic ? `<li>Hispanic: ${percentHispanic || '0%'}</li>` : ''
+        }
+        ${precentLatinx ? `<li>Latinx: ${precentLatinx || '0%'}</li>` : ''}
+        ${percentOther ? `<li>Other: ${percentOther || '0%'}</li>` : ''}
+        ${percentMen ? `<li>Men: ${percentMen || '0%'}</li>` : ''}
+        ${percentWomen ? `<li>Women: ${percentWomen || '0%'}</li>` : ''}
+        
       </ul>
       <h3>Did The Facility Respond To Questions About The Types of Labor?</h3>
       <p>${reqs}</p>
